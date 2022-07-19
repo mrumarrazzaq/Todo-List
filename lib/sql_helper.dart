@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
-const String tableName = 'TODO';
+const String tableName = 'TodoList';
 
 class SQLHelper {
   static Future<void> createTables(sql.Database database) async {
@@ -12,8 +12,7 @@ class SQLHelper {
         taskStatus STRING,
         taskDate STRING,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-      """);
+      )""");
   }
 
   static Future<sql.Database> db() async {
@@ -26,26 +25,26 @@ class SQLHelper {
     );
   }
 
-  // Create new item (journal)
+  // Create new item
   static Future<int> createItem(
-      {required String taskTitle,
-      String? taskDescription,
+      {required String title,
+      String? description,
       required String taskDate,
       required String taskStatus}) async {
     final db = await SQLHelper.db();
 
     final data = {
-      'taskTitle': taskTitle,
-      'taskDescription': taskDescription,
+      'taskTitle': title,
+      'taskDescription': description,
       'taskStatus': taskStatus,
-      'taskDate': taskStatus,
+      'taskDate': taskDate,
     };
     final id = await db.insert(tableName, data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
   }
 
-  // Read all items (journals)
+  // Read all items
   static Future<List<Map<String, dynamic>>> getItems() async {
     final db = await SQLHelper.db();
     return db.query(tableName, orderBy: "id");
@@ -61,15 +60,15 @@ class SQLHelper {
   // Update an item by id
   static Future<int> updateItem(
       {required int id,
-      required String taskTitle,
-      String? taskDescription,
+      required String title,
+      String? description,
       required String taskDate,
       required String taskStatus}) async {
     final db = await SQLHelper.db();
 
     final data = {
-      'taskTitle': taskTitle,
-      'taskDescription': taskDescription,
+      'taskTitle': title,
+      'taskDescription': description,
       'taskStatus': taskStatus,
       'taskDate': taskDate,
       'createdAt': DateTime.now().toString()
