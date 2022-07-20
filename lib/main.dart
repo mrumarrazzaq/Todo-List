@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         depth: 10,
         shadowLightColor: Color(0xff616161),
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }

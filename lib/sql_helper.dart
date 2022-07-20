@@ -26,7 +26,7 @@ class SQLHelper {
   }
 
   // Create new item
-  static Future<int> createItem(
+  static Future<int> createTask(
       {required String title,
       String? description,
       required String taskDate,
@@ -44,21 +44,20 @@ class SQLHelper {
     return id;
   }
 
-  // Read all items
-  static Future<List<Map<String, dynamic>>> getItems() async {
+  // Read all Task
+  static Future<List<Map<String, dynamic>>> getTasks() async {
     final db = await SQLHelper.db();
     return db.query(tableName, orderBy: "id");
   }
 
-  // Read a single item by id
-  // The app doesn't use this method but I put here in case you want to see it
-  static Future<List<Map<String, dynamic>>> getItem(int id) async {
+  // Read a single Task by id
+  static Future<List<Map<String, dynamic>>> getTask(int id) async {
     final db = await SQLHelper.db();
     return db.query(tableName, where: "id = ?", whereArgs: [id], limit: 1);
   }
 
-  // Update an item by id
-  static Future<int> updateItem(
+  // Update an Task by id
+  static Future<int> updateTask(
       {required int id,
       required String title,
       String? description,
@@ -79,8 +78,8 @@ class SQLHelper {
     return result;
   }
 
-  // Delete
-  static Future<void> deleteItem(int id) async {
+  // Delete a Task by id
+  static Future<void> deleteTask(int id) async {
     final db = await SQLHelper.db();
     try {
       await db.delete(tableName, where: "id = ?", whereArgs: [id]);

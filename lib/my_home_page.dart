@@ -21,14 +21,14 @@ class _MyHomePageState extends State<MyHomePage> {
       TextEditingController();
   String _taskStatus = 'TODO';
 
-  //All Cosh Collections
+  //All Todos Collections
   List<Map<String, dynamic>> _todosCollection = [];
 
   DateTime _selectedDate = DateTime.now();
   String _selectedDateToString =
       "${DateTime.now().day.toString().padLeft(2, '0')}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().year.toString()}";
 
-  validate(int? id) async {
+  validateData(int? id) async {
     if (formKey.currentState!.validate()) {
       print('-----------------');
       print('Form is validated');
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoading = true;
   // This function is used to fetch all data from the database
   void _refreshData() async {
-    final data = await SQLHelper.getItems();
+    final data = await SQLHelper.getTasks();
     setState(() {
       _todosCollection = data;
       _isLoading = false;
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Insert a new task to the database
   Future<void> _addItem() async {
-    await SQLHelper.createItem(
+    await SQLHelper.createTask(
       title: _taskTitleController.text,
       description: _taskDescriptionController.text,
       taskDate: _selectedDateToString,
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Update an existing task
   Future<void> _updateItem(int id) async {
-    await SQLHelper.updateItem(
+    await SQLHelper.updateTask(
       id: id,
       title: _taskTitleController.text,
       description: _taskDescriptionController.text,
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       required String description,
       required String date,
       required String status}) async {
-    await SQLHelper.updateItem(
+    await SQLHelper.updateTask(
       id: id,
       title: title,
       description: description,
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Delete task from database
   void _deleteItem(int id) async {
-    await SQLHelper.deleteItem(id);
+    await SQLHelper.deleteTask(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Task Deleted Successfully'),
     ));
@@ -742,7 +742,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         : const Color(0xFF3E3E3E),
                   ),
                   onPressed: () {
-                    validate(id);
+                    validateData(id);
                   },
                   child: Text(
                     id == null ? 'Create New' : 'Update',

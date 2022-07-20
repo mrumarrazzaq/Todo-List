@@ -1,7 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // Create storage
-final storage = new FlutterSecureStorage();
+final storage = FlutterSecureStorage();
 
 // Write value
 savePreference(String themeValue) async {
