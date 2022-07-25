@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -203,6 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: NeumorphicTheme.baseColor(context),
         body: TabBarView(
           children: [
+            //Todos Task Section
             Scaffold(
               body: _isLoading
                   ? const Center(
@@ -212,11 +215,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   : ListView.builder(
                       itemCount: _todosCollection.length,
                       itemBuilder: (context, index) {
-                        // print('Total Todos Tasks  : ${_todosCollection.length}');
+                        int todoTask = 0;
+                        if (_todosCollection[index]['taskStatus'] == 'TODO') {
+                          todoTask++;
+                        }
+                        print('Total Todo Tasks  : $todoTask');
+                        var fromTop =
+                            (MediaQuery.of(context).size.height) / 2.5;
+
                         // print('Id : ${_todosCollection[index]['id']}');
                         return _todosCollection[index]['taskStatus'] == 'TODO'
-                            ? Hero(
-                                tag: 'animate',
+                            ? AnimatedContainer(
+                                duration: Duration(milliseconds: 500),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15.0, vertical: 10.0),
@@ -354,9 +364,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                 ? Colors.black
                                                                 : Colors.white),
                                                         onPressed: () async {
-                                                          _deleteItem(
+                                                          openDeleteDialog(
                                                               _todosCollection[
-                                                                  index]['id']);
+                                                                  index]['id'],
+                                                              _todosCollection[
+                                                                      index][
+                                                                  'taskTitle']);
                                                         }),
                                                   ],
                                                 ),
@@ -373,6 +386,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
             ),
+            //Completed Task Section
             Scaffold(
               body: _isLoading
                   ? const Center(
@@ -382,12 +396,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   : ListView.builder(
                       itemCount: _todosCollection.length,
                       itemBuilder: (context, index) {
-                        // print('Total Todos Tasks  : ${_todosCollection.length}');
-                        // print('Id : ${_todosCollection[index]['id']}');
+                        int completedTask = 0;
+                        if (_todosCollection[index]['taskStatus'] ==
+                            'COMPLETED') {
+                          completedTask++;
+                        }
+                        print('Total Completed Tasks  : $completedTask');
+                        var fromTop =
+                            (MediaQuery.of(context).size.height) / 2.5;
                         return _todosCollection[index]['taskStatus'] ==
                                 'COMPLETED'
-                            ? Hero(
-                                tag: 'animate',
+                            ? AnimatedContainer(
+                                duration: const Duration(milliseconds: 500),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15.0, vertical: 10.0),
@@ -525,9 +545,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                 ? Colors.black
                                                                 : Colors.white),
                                                         onPressed: () async {
-                                                          _deleteItem(
+                                                          openDeleteDialog(
                                                               _todosCollection[
-                                                                  index]['id']);
+                                                                  index]['id'],
+                                                              _todosCollection[
+                                                                      index][
+                                                                  'taskTitle']);
                                                         }),
                                                   ],
                                                 ),
@@ -549,7 +572,11 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: NeumorphicFloatingActionButton(
           tooltip: 'Add New Task',
-          child: const Icon(Icons.add, size: 30),
+          child: Icon(
+            Icons.add,
+            size: 30,
+            color: isLightTheme ? Colors.black : Colors.white,
+          ),
           style: const NeumorphicStyle(
             shape: NeumorphicShape.concave,
             depth: 3,
@@ -755,6 +782,92 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 
+  openDeleteDialog(int id, String title) => showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            var width = MediaQuery.of(context).size.width;
+            return AlertDialog(
+              backgroundColor: isLightTheme
+                  ? const Color(0xffDDDDDD)
+                  : const Color(0xFF3E3E3E),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              contentPadding: const EdgeInsets.only(top: 10.0),
+              title: const Center(child: Text('Delete Task')),
+              content: Neumorphic(
+                style: const NeumorphicStyle(
+                  depth: 0,
+                ),
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: width,
+                    color: isLightTheme
+                        ? const Color(0xffDDDDDD)
+                        : const Color(0xFF3E3E3E),
+                    height: 80.0,
+                    child: Center(
+                        child: Column(
+                      children: [
+                        Expanded(
+                          child: Text(title,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.fade)),
+                        ),
+                        const Text('Do you want to delete the task'),
+                        const Text('Deleted task cannot be recovered',
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 10,
+                                color: Colors.red)),
+                      ],
+                    )),
+                  ),
+                ),
+              ),
+              actions: [
+                //CANCEL Button
+                NeumorphicButton(
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.concave,
+                    depth: 0.5,
+                    color: isLightTheme
+                        ? const Color(0xffDDDDDD)
+                        : const Color(0xFF3E3E3E),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop('dialog');
+                  },
+                  child: Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
+                //CREATE Button
+                NeumorphicButton(
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.concave,
+                    depth: 0.5,
+                    color: isLightTheme
+                        ? const Color(0xffDDDDDD)
+                        : const Color(0xFF3E3E3E),
+                  ),
+                  onPressed: () {
+                    //Delete a task
+                    _deleteItem(id);
+                    Navigator.of(context, rootNavigator: true).pop('dialog');
+                  },
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      );
   Widget buildDatePicker() {
     return SizedBox(
       height: 55,

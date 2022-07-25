@@ -1,8 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:todo_list/my_home_page.dart';
 import 'package:todo_list/shared_preferences.dart';
@@ -22,8 +20,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-
   readSavePreferences() async {
     // ignore: non_constant_identifier_names
     var value = await readPreferences();
